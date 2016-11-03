@@ -1,5 +1,4 @@
 import 'io'
-import 'MySQL'
 def getLines(file) { # retrieve every non-empty line from the given file
 	r = reader(file,'utf-8')
 	lines = []
