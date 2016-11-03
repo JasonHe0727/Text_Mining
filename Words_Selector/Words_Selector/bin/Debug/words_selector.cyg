@@ -1,4 +1,6 @@
-def getLines(file) {
+import 'io'
+import 'MySQL'
+def getLines(file) { # retrieve every non-empty line from the given file
 	r = reader(file,'utf-8')
 	lines = []
 	while r.peek() != -1 {
@@ -10,7 +12,7 @@ def getLines(file) {
 	return lines
 }
 
-def findWords(sentence, words){ # 统计单词是否出现，如果统计词频速度会较慢
+def findWords(sentence, words){ # find the words in the sentence, return a boolean vector 
 	a = []
 	for i = 0,len(words) {
 		result = string.find(sentence, words[i])
@@ -23,7 +25,47 @@ def findWords(sentence, words){ # 统计单词是否出现，如果统计词频�
 	return a
 }
 
-def chi2(word_col, word_vecs, sentiment) {
+def cutSentence(filePath,stopPath){ # cut the sentence, using jieba.Net (which is awesome!)
+	print("Start cutting sentences.")
+	stopwords = File.readAllText(stopPath,'utf-8')
+	f = File.open(filePath,FileMode.Open)
+	fileReader = reader(f,'utf-8')
+	fileReader.readLine() # Skip the header
+	seg_words = hashtable()
+	while fileReader.peek()!=-1{
+		line = string.split(fileReader.readLine(),'\t')
+		if len(line) != 2 {
+			print("error format line")
+			continue
+		}
+		else {
+			words = jieba_cut(line[1]) 
+			foreach word in words{
+				if string.find(stopwords,word)<0{
+					seg_words[word] = true
+				}
+			}
+		}
+	}
+	fileReader.close()
+	dispose(f)
+	print("Finish cutting sentences.")
+	return seg_words
+}
+
+def writeSegWords(seg_words, outputPath){ # write the segments to a file
+	words = htable.keys(seg_words)
+	f = File.open(outputPath,FileMode.Create)
+	w = writer(f,'utf-8')
+	foreach i in words {
+		w.writeLine(i)
+	}
+	w.close()
+	print("Segmented words has been written to file.")
+	return words
+}
+
+def chi2(word_col, word_vecs, sentiment) { # Compute the Chi2 value in order to find the important words
 	A = B = C = D = 0
 	for i = 0,len(word_vecs) {
 		a = word_vecs[i][word_col]
@@ -47,45 +89,12 @@ def chi2(word_col, word_vecs, sentiment) {
 	return chi2_value
 }
 
-def loadDataFromMySQL(server, user_id, password, database,tableName,wordsFilePath,subject_index,content_index,sen_index){
-	#server = "localhost"
-	#user_id = "root"
-	#password = "123456"
-	#database = "mydatabase"
-	#tableName = "Qualcomm"
-	connStr = string.format("server={0};user id={1};password={2};database={3}",server,user_id,password,database)
-	conn = MySQLConnection(connStr)
-	conn.open()
-	cmd = conn.createCommand()  # MySQLCommand
-	da_reader = cmd.executeReader(string.format("SELECT * FROM {0}",tableName))
-
-	file = File.open(wordsFilePath, FileMode.Open)
-	words = getLines(file)
-
-	#subject_index = 7
-	#content_index = 8
-	#sen_index = 9
-	sentiment = []
-	word_vecs = []
-	while da_reader.read() {
-		subject = da_reader.getValue(subject_index)
-		content = da_reader.getValue(content_index)
-		List.append(word_vecs,findWords(string.concat([subject,content]),words))
-		sen_v = da_reader.getValue(sen_index)
-		sen_v = string.lower(sen_v)
-		List.append(sentiment,sen_v  == 'positive' or sen_v == 'netural') # positive: true negative: false
-	}
-	ch2_values = []
-	for word_col = 0,len(words) {
-		List.append(ch2_values,chi2(word_col,word_vecs,sentiment))
-	}
-	return ch2_values
-}
-
-def loadDataFromCsvFile(filePath,wordsFilePath){
-	file = File.open(wordsFilePath, FileMode.Open)
-	words = getLines(file)
-	dispose(file)
+def loadDataFromCsvFile(filePath,words){
+	# load data from csv file
+	# file format:(delimited by tab)
+	# sentiment	sentences 
+	# positive	balabalabala...
+	# negative	balabalabala...
 	
 	word_vecs = []
 	sentiment = []
@@ -95,6 +104,7 @@ def loadDataFromCsvFile(filePath,wordsFilePath){
 	trainData = []
 	fileReader.readLine() # skip the header
 	index = 1
+	print("start finding words.")
 	while fileReader.peek() != -1 {
 		line = fileReader.readLine()
 		t = string.split(line,'\t')
@@ -115,9 +125,45 @@ def loadDataFromCsvFile(filePath,wordsFilePath){
 	}
 	fileReader.close()
 	dispose(file)
-	ch2_values = []
+	print("finish finding words.")
+	print("start computing Chi2 values")
+	chi2_values = []
 	for word_col = 0,len(words) {
-		List.append(ch2_values, chi2(word_col, word_vecs, sentiment))
+		List.append(chi2_values, chi2(word_col, word_vecs, sentiment))
 	}
-	return ch2_values
+	print("finish computing Chi2 values")
+	return chi2_values
+}
+
+def getSelectedWords(sorted_chi2_values,words,outputPath,k){
+	f = File.open(outputPath,FileMode.Create)
+	w = writer(f,'utf-8')
+	count = 0
+	for i = 0,len(sorted_chi2_values) {
+		if count >= k {
+			break
+		}
+		value = sorted_chi2_values[i]
+		index = value[0]
+		w.writeLine(words[index])
+		count = count + 1
+	}
+	w.close()
+	dispose(f)
+}
+
+def __MAIN__(args){
+	trainPath = args[0] # train data file path
+	stopPath = args[1] # stop words file path
+	wordsPath = args[2] # output segmented words file path
+	selectedWordsPath = args[3] # selected words file path
+	k = args[4] # select top-k words
+	seg_words = cutSentence(trainPath, stopPath)
+
+	words = writeSegWords(seg_words,wordsPath)
+
+	chi2_values = loadDataFromCsvFile(trainPath, words)
+	chi2_list = sort_chi2_list(chi2_values)
+	getSelectedWords(chi2_list, words,selectedWordsPath,k)
+	print("Finished!")
 }

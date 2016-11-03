@@ -4,3 +4,6 @@
 /home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/obj/x86/Debug/Words_Selector.exe
 /home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/obj/x86/Debug/Words_Selector.exe.mdb
 /home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/bin/Debug/Cygni.dll
+/home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/bin/Debug/Newtonsoft.Json.dll
+/home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/bin/Debug/JiebaNet.Analyser.dll
+/home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/bin/Debug/JiebaNet.Segmenter.dll
