@@ -1,0 +1,123 @@
+def getLines(file) {
+	r = reader(file,'utf-8')
+	lines = []
+	while r.peek() != -1 {
+		line = r.readLine()
+		if string.trim(line) != string.empty {
+			List.append(lines,line)
+		}
+	}
+	return lines
+}
+
+def findWords(sentence, words){ # 统计单词是否出现，如果统计词频速度会较慢
+	a = []
+	for i = 0,len(words) {
+		result = string.find(sentence, words[i])
+		if result >= 0 {
+			List.append(a,true)
+		} else { 
+			List.append(a,false)
+		}
+	}
+	return a
+}
+
+def chi2(word_col, word_vecs, sentiment) {
+	A = B = C = D = 0
+	for i = 0,len(word_vecs) {
+		a = word_vecs[i][word_col]
+		sen = sentiment[i]  # true: postive false: negative
+		if a {
+			if sen {
+				B = B + 1
+			} else {
+				A = A + 1
+			}
+		} else {
+			if sen {
+				D = D + 1
+			} else {
+				C = C + 1
+			}
+		}
+	}
+	N = A+B+C+D
+	chi2_value =N*(A*D-B*C)^2 / ((A+C)*(A+B)*(B+D)*(C+D)) 
+	return chi2_value
+}
+
+def loadDataFromMySQL(server, user_id, password, database,tableName,wordsFilePath,subject_index,content_index,sen_index){
+	#server = "localhost"
+	#user_id = "root"
+	#password = "123456"
+	#database = "mydatabase"
+	#tableName = "Qualcomm"
+	connStr = string.format("server={0};user id={1};password={2};database={3}",server,user_id,password,database)
+	conn = MySQLConnection(connStr)
+	conn.open()
+	cmd = conn.createCommand()  # MySQLCommand
+	da_reader = cmd.executeReader(string.format("SELECT * FROM {0}",tableName))
+
+	file = File.open(wordsFilePath, FileMode.Open)
+	words = getLines(file)
+
+	#subject_index = 7
+	#content_index = 8
+	#sen_index = 9
+	sentiment = []
+	word_vecs = []
+	while da_reader.read() {
+		subject = da_reader.getValue(subject_index)
+		content = da_reader.getValue(content_index)
+		List.append(word_vecs,findWords(string.concat([subject,content]),words))
+		sen_v = da_reader.getValue(sen_index)
+		sen_v = string.lower(sen_v)
+		List.append(sentiment,sen_v  == 'positive' or sen_v == 'netural') # positive: true negative: false
+	}
+	ch2_values = []
+	for word_col = 0,len(words) {
+		List.append(ch2_values,chi2(word_col,word_vecs,sentiment))
+	}
+	return ch2_values
+}
+
+def loadDataFromCsvFile(filePath,wordsFilePath){
+	file = File.open(wordsFilePath, FileMode.Open)
+	words = getLines(file)
+	dispose(file)
+	
+	word_vecs = []
+	sentiment = []
+
+	file = File.open(filePath, FileMode.Open)
+	fileReader = reader(file,'utf-8')
+	trainData = []
+	fileReader.readLine() # skip the header
+	index = 1
+	while fileReader.peek() != -1 {
+		line = fileReader.readLine()
+		t = string.split(line,'\t')
+		t[0] = string.lower(t[0])
+		if t[0] == 'positive' or t[0] == 'netural' {
+			List.append(word_vecs,findWords(t[1],words))
+			List.append(sentiment, true)
+		} 
+		elif t[0] == 'negative' {
+			List.append(word_vecs, findWords(t[1],words))
+			List.append(sentiment, false)
+		}
+		else {
+			printf('Unrecoginizable sentiment: {0}, drop it',t[0])
+		}
+		print(index)
+		index = index + 1
+	}
+	fileReader.close()
+	dispose(file)
+	ch2_values = []
+	for word_col = 0,len(words) {
+		List.append(ch2_values, chi2(word_col, word_vecs, sentiment))
+	}
+	return ch2_values
+}

@@ -1,0 +1,6 @@
+/home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/bin/Debug/Words_Selector.exe.mdb
+/home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/bin/Debug/Words_Selector.exe
+/home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/obj/x86/Debug/Words_Selector.exe
+/home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/obj/x86/Debug/Words_Selector.exe.mdb
+/home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/bin/Debug/Cygni.dll
