@@ -1,11 +1,12 @@
 import 'io'
+import 'MySQL'
 def getLines(file) { # retrieve every non-empty line from the given file
 	r = reader(file,'utf-8')
 	lines = []
 	while r.peek() != -1 {
 		line = r.readLine()
-		if string.trim(line) != string.empty {
-			List.append(lines,line)
+		if line.trim() != string.empty {
+			lines.append(line)
 		}
 	}
 	return lines
@@ -14,11 +15,11 @@ def getLines(file) { # retrieve every non-empty line from the given file
 def findWords(sentence, words){ # find the words in the sentence, return a boolean vector 
 	a = []
 	for i = 0,len(words) {
-		result = string.find(sentence, words[i])
+		result = sentence.find(words[i])
 		if result >= 0 {
-			List.append(a,true)
-		} else { 
-			List.append(a,false)
+			a.append(true)
+		} else {
+			a.append(false) 
 		}
 	}
 	return a
@@ -31,8 +32,9 @@ def cutSentence(filePath,stopPath){ # cut the sentence, using jieba.Net (which i
 	fileReader = reader(f,'utf-8')
 	fileReader.readLine() # Skip the header
 	seg_words = hashtable()
+	sep = ['\t']
 	while fileReader.peek()!=-1{
-		line = string.split(fileReader.readLine(),'\t')
+		line = fileReader.readLine().split(sep)
 		if len(line) != 2 {
 			print("error format line")
 			continue
@@ -40,7 +42,7 @@ def cutSentence(filePath,stopPath){ # cut the sentence, using jieba.Net (which i
 		else {
 			words = jieba_cut(line[1]) 
 			foreach word in words{
-				if string.find(stopwords,word)<0{
+				if stopwords.find(word)<0{
 					seg_words[word] = true
 				}
 			}
@@ -53,7 +55,7 @@ def cutSentence(filePath,stopPath){ # cut the sentence, using jieba.Net (which i
 }
 
 def writeSegWords(seg_words, outputPath){ # write the segments to a file
-	words = htable.keys(seg_words)
+	words = seg_words.keys()
 	f = File.open(outputPath,FileMode.Create)
 	w = writer(f,'utf-8')
 	foreach i in words {
@@ -104,17 +106,18 @@ def loadDataFromCsvFile(filePath,words){
 	fileReader.readLine() # skip the header
 	index = 1
 	print("start finding words.")
+	sep = ['\t']
 	while fileReader.peek() != -1 {
 		line = fileReader.readLine()
-		t = string.split(line,'\t')
+		t = line.split(sep)
 		t[0] = string.lower(t[0])
 		if t[0] == 'positive' or t[0] == 'netural' {
-			List.append(word_vecs,findWords(t[1],words))
-			List.append(sentiment, true)
+			word_vecs.append(findWords(t[1], words))
+			sentiment.append(true)
 		} 
 		elif t[0] == 'negative' {
-			List.append(word_vecs, findWords(t[1],words))
-			List.append(sentiment, false)
+			word_vecs.append(findWords(t[1], words))
+			sentiment.append(false)
 		}
 		else {
 			printf('Unrecoginizable sentiment: {0}, drop it',t[0])
@@ -128,7 +131,7 @@ def loadDataFromCsvFile(filePath,words){
 	print("start computing Chi2 values")
 	chi2_values = []
 	for word_col = 0,len(words) {
-		List.append(chi2_values, chi2(word_col, word_vecs, sentiment))
+		chi2_values.append(chi2(word_col, word_vecs, sentiment))
 	}
 	print("finish computing Chi2 values")
 	return chi2_values

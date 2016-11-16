@@ -1,0 +1,9 @@
+/home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/obj/x86/Release/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/bin/Release/Words_Selector.exe.mdb
+/home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/bin/Release/Words_Selector.exe
+/home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/obj/x86/Release/Words_Selector.exe
+/home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/obj/x86/Release/Words_Selector.exe.mdb
+/home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/bin/Release/Cygni.dll
+/home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/bin/Release/Newtonsoft.Json.dll
+/home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/bin/Release/JiebaNet.Analyser.dll
+/home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/bin/Release/JiebaNet.Segmenter.dll

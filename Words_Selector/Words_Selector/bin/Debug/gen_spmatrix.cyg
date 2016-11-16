@@ -1,0 +1,71 @@
+import 'io'
+
+def gen_spmatrix(selectedWords, trainPath, outputPath) {
+	# selectedWords : selected words
+	# trainPath: train dataset
+	#			 - format: sentiment	content
+	# wordsFile = File.open(wordsPath, FileMode.Read)
+	r = reader(trainPath, 'utf-8')
+	w = writer(outputPath,true, 'utf-8')
+	lineNumber = 0
+	sp_mat = []
+	while r.peek() != -1 {
+		line = r.readLine().split('\t')
+		if line.count != 2 {
+			printf('error line {0}', lineNumber + 1)
+			continue
+		}
+		else {
+			if line[0].lower() == 'positive' {
+				sen = true
+			} elif line[0].lower() == 'negative' {
+				sen = false
+			} else {
+				printf('error line {0}', lineNumber + 1)
+				continue
+			}
+			content = line[1]
+			index = 0
+			foreach word in selectedWords {
+				if content.find(word) >= 0 {
+					# sp_mat.append([lineNumber,index,1])
+					element = string.concat([lineNumber,'\t', index, '\t', 1])
+					w.writeLine(element)
+				}
+				index = index + 1
+			}
+			if sen {
+				#sp_mat.append([lineNumber,index,1])
+				w.writeLine(string.concat([lineNumber,'\t',index,'\t',1]))
+			}
+			lineNumber = lineNumber + 1
+		}
+	}
+	r.close()
+	w.close()
+	print("sparse matrix has been written to file.")
+
+}
+
+def get_selected_words(wordsPath){
+	r = reader(wordsPath , 'utf-8')
+	words = []
+	while r.peek() != -1 {
+		line = r.readLine().trim()
+		if line.length != 0 {
+			words.append(line)
+		}
+	}
+	return words
+}
+
+def __MAIN__(args) {
+	print("Start!")
+	wordsPath = args[0]
+	trainPath = args[1]
+	outputPath = args[2]
+	print("getting selected words")
+	words = get_selected_words(wordsPath)
+	printf("{0} words has been successfully loaded", words.count)
+	gen_spmatrix(words, trainPath, outputPath)
+}

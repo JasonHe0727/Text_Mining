@@ -1,0 +1,5 @@
+TrainPath = /home/jasonhe/Data/auto sentiment训练集.csv
+StopWordsPath = /home/jasonhe/Data/stopwords.txt
+SegmentedWordsPath = /home/jasonhe/Data/seg_words_20161103.txt
+FeatureWordsPath = /home/jasonhe/Data/selected_words_20161103.txt
+MatrixOutputPath = /home/jasonhe/Data/words_matrix.txt
