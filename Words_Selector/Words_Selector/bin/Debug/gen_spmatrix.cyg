@@ -1,4 +1,5 @@
 import 'io'
+import 'collections'
 
 def gen_spmatrix(selectedWords, trainPath, outputPath) {
 	# selectedWords : selected words
@@ -28,23 +29,46 @@ def gen_spmatrix(selectedWords, trainPath, outputPath) {
 			index = 0
 			foreach word in selectedWords {
 				if content.find(word) >= 0 {
-					# sp_mat.append([lineNumber,index,1])
-					element = string.concat([lineNumber,'\t', index, '\t', 1])
-					w.writeLine(element)
+					sp_mat.append([lineNumber,index,1])
+					# element = string.concat([lineNumber,'\t', index, '\t', 1])
+					# w.writeLine(element)
 				}
 				index = index + 1
 			}
 			if sen {
-				#sp_mat.append([lineNumber,index,1])
-				w.writeLine(string.concat([lineNumber,'\t',index,'\t',1]))
+				sp_mat.append([lineNumber,index,1])
+				# w.writeLine(string.concat([lineNumber,'\t',index,'\t',1]))
 			}
 			lineNumber = lineNumber + 1
 		}
 	}
+	nRows = lineNumber
+	nCols = len(selectedWords) + 1
+	mat = array2(nRows, nCols)
+	foreach item in sp_mat {
+		i = item[0]
+		j = item[1]
+		v = item[2]
+		mat[i, j] = v
+	}
+	for i = 0, nRows {
+		for j = 0, nCols {
+			v = mat[i,j]
+			if v == null {
+				w.write('0')
+			} else {
+				w.write('1')
+			}
+			if j != nCols - 1 {
+				w.write('\t')
+			}
+		}
+		w.write('\r\n')
+	}
 	r.close()
 	w.close()
-	print("sparse matrix has been written to file.")
-
+	# print("sparse matrix has been written to file.")
+	print("matrix has been written to file.")
 }
 
 def get_selected_words(wordsPath){

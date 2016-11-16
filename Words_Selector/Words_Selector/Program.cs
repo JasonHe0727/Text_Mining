@@ -36,8 +36,10 @@ namespace Words_Selector
 			Console.WriteLine ("============================================================");
 			Console.WriteLine ("1： 对训练集进行分词， 并从分词结果中选取特征词");
 			Console.WriteLine ("2： 根据选取的特征词， 生成矩阵文件");
+			Console.WriteLine ("3： 根据特征词所对应的权重， 对情感进行分类");
+
 			Console.WriteLine ("============================================================");
-			Console.Write ("请输入1或2对任务进行选择，输入其他内容程序会出错或自动退出：");
+			Console.Write ("请输入1或2或3，对任务进行选择，输入其他内容程序会出错或自动退出：");
 
 			int choice = int.Parse (Console.ReadLine ());
 			if (choice == 1) {
@@ -54,12 +56,15 @@ namespace Words_Selector
 				DynValue K = (double)k;
 				Console.WriteLine ("执行 Cygni 脚本......");
 				engine.DoFile ("words_selector.cyg");
-				engine.ExecuteFromEntryPoint (new DynList(new []{ trainPath, stopPath, segmentedWordsPath, featureWordsPath, K}));
+				engine.ExecuteFromEntryPoint (new DynList (new []{ trainPath, stopPath, segmentedWordsPath, featureWordsPath, K }));
 			} else if (choice == 2) {
 				Console.WriteLine ("执行 Cygni 脚本......");
 				engine.DoFile ("gen_spmatrix.cyg");
-				engine.ExecuteFromEntryPoint (new DynList( new [] {  featureWordsPath, trainPath,matrixOutputPath}));
-			} 
+				engine.ExecuteFromEntryPoint (new DynList (new [] { featureWordsPath, trainPath, matrixOutputPath }));
+			} else if (choice == 3) {
+				// To Do
+
+			}
 			End:				
 			Console.WriteLine ("程序已终止，按任意键退出……");
 			Console.ReadKey ();
