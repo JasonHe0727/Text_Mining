@@ -43,6 +43,9 @@
     <Reference Include="Cygni">
       <HintPath>..\..\Cygni\Cygni.Mono\Cygni\bin\Debug\Cygni.dll</HintPath>
     </Reference>
+    <Reference Include="CygniLib">
+      <HintPath>..\..\Cygni\Cygni.Libraries\CygniLib\CygniLib\bin\Debug\CygniLib.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />

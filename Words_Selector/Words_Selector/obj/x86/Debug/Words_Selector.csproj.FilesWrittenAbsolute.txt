@@ -7,3 +7,4 @@
 /home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/bin/Debug/Newtonsoft.Json.dll
 /home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/bin/Debug/JiebaNet.Analyser.dll
 /home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/bin/Debug/JiebaNet.Segmenter.dll
+/home/jasonhe/MyCode/CSharpCode/Words_Selector/Words_Selector/bin/Debug/CygniLib.dll

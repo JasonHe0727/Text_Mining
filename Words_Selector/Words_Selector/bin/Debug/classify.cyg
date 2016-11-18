@@ -1,0 +1,55 @@
+import 'io'
+def read_word_weight(filepath){
+	r = reader(filepath,'utf-8')
+	dic_word_weight = {}
+	while r.peek() != -1{
+		t = r.readLine().split('\t')
+		if t.count != 2{
+			print 'error'
+			continue
+		}
+		dic_word_weight[t[0]] = toNumber(t[1])
+	} 
+	r.close()
+	return dic_word_weight
+}
+
+
+def read_sentence(filepath){
+	a = reader(filepath,'utf-8')
+	test_data = []
+	while a.peek() != -1{
+		test_data.append(a.readLine())
+	}
+	return test_data
+}
+
+def classify(test_data,dic_word_weight){
+    result = []
+    foreach i in test_data{
+		value = 0
+		keys = dic_word_weight.keys()
+		foreach key in keys{
+			if i.find(key) >= 0{
+				value = value + dic_word_weight[key]
+			}
+		}
+		result.append(1 / (1+ exp(-value)))
+    }
+    return result
+}
+
+def output(result){
+	a = writer('output.txt',false,'utf-8')
+	for i = 0, result.count{
+		line = result[i]
+		a.writeLine(strcat(toString(i),'\t',toString(line)))
+	}	
+	a.close()
+}
+
+def __MAIN__(weight_filepath,data_filepath){
+	dic_word_weight = read_word_weight(weight_filepath)
+	classify_result = classify(read_sentence(data_filepath),dic_word_weight)
+	output(classify_result)
+}

@@ -28,6 +28,9 @@ namespace Words_Selector
 			DynValue segmentedWordsPath = dic ["SegmentedWordsPath"];// output segmented words file path
 			DynValue featureWordsPath = dic ["FeatureWordsPath"];// selected words file path
 			DynValue matrixOutputPath = dic ["MatrixOutputPath"];// matrix path
+
+			DynValue weightPath = dic ["WeightFilePath"];// weights
+			DynValue testPath = dic ["TestDataPath"];// test data set 
 			Console.WriteLine ("配置文件加载完毕。\r\n");
 
 			Console.WriteLine ("正在初始化 Cygni 引擎……");
@@ -63,7 +66,9 @@ namespace Words_Selector
 				engine.ExecuteFromEntryPoint (new DynList (new [] { featureWordsPath, trainPath, matrixOutputPath }));
 			} else if (choice == 3) {
 				// To Do
-
+				Console.WriteLine ("执行 Cygni 脚本......");
+				engine.DoFile ("classify.cyg");
+				engine.ExecuteFromEntryPoint (weightPath, testPath);
 			}
 			End:				
 			Console.WriteLine ("程序已终止，按任意键退出……");

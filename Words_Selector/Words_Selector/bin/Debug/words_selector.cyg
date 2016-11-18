@@ -1,5 +1,4 @@
 import 'io'
-import 'MySQL'
 def getLines(file) { # retrieve every non-empty line from the given file
 	r = reader(file,'utf-8')
 	lines = []
@@ -31,7 +30,7 @@ def cutSentence(filePath,stopPath){ # cut the sentence, using jieba.Net (which i
 	f = File.open(filePath,FileMode.Open)
 	fileReader = reader(f,'utf-8')
 	fileReader.readLine() # Skip the header
-	seg_words = hashtable()
+	seg_words = {} 
 	sep = ['\t']
 	while fileReader.peek()!=-1{
 		line = fileReader.readLine().split(sep)
