@@ -65,7 +65,6 @@ namespace Words_Selector
 				engine.DoFile ("gen_spmatrix.cyg");
 				engine.ExecuteFromEntryPoint (new DynList (new [] { featureWordsPath, trainPath, matrixOutputPath }));
 			} else if (choice == 3) {
-				// To Do
 				Console.WriteLine ("执行 Cygni 脚本......");
 				engine.DoFile ("classify.cyg");
 				engine.ExecuteFromEntryPoint (weightPath, testPath);

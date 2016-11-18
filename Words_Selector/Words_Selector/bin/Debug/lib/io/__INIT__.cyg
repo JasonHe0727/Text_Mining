@@ -1,1 +1,1 @@
-loaddll "CygniLibraries.dll","CygniLibraries.IO.io_funcs"
+loaddll "CygniLib.dll","CygniLib.IO.io_funcs"
