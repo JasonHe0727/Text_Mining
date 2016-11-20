@@ -1,4 +1,5 @@
 import 'io'
+
 def read_word_weight(filepath){
 	r = reader(filepath,'utf-8')
 	dic_word_weight = {}
@@ -44,12 +45,17 @@ def output(result){
 	for i = 0, result.count{
 		line = result[i]
 		a.writeLine(strcat(toString(i),'\t',toString(line)))
-	}	
+	}
 	a.close()
 }
 
 def __MAIN__(weight_filepath,data_filepath){
+	print('正在读取词语权重文件……')
 	dic_word_weight = read_word_weight(weight_filepath)
+	print('词语权重文件读取完毕。')
+	print('正在进行分类……')
 	classify_result = classify(read_sentence(data_filepath),dic_word_weight)
+	print('分类完毕……')
 	output(classify_result)
+	print('分类结果已输出')
 }
